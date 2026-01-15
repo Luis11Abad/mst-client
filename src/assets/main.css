@@ -1,14 +1,42 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --color-whitesmoke: #F7F9FA;
-  --color-lightgray: #E8E8ED;
-  --color-gray: #8091a5;
-  --color-primary: #0052FF;
-  --color-dark: #091057;
+    --color-whitesmoke: #f6f6f6;
+    --color-lightgray: #e8e8ed;
+    --color-gray: #737373;
+    --color-primary: #0052ff;
+    --color-secondary: #ffa245;
+    --color-dark: #000614;
+    --text-xs: 13px;
+}
+
+#app {
+    @apply w-screen h-screen overflow-hidden flex bg-whitesmoke;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+}
+
+* {
+    @apply outline-none border-lightgray;
+}
+
+button {
+    @apply cursor-pointer;
+    &:disabled {
+        @apply !bg-lightgray !text-gray pointer-events-none;
+    }
+}
+
+input {
+    @apply w-full h-10 px-3 border rounded-md bg-white;
+    &:read-only {
+        @apply bg-whitesmoke pointer-events-none;
+    }
+}
+
+main > section {
+    @apply flex flex-col h-full;
 }

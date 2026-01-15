@@ -3,6 +3,6 @@ import TopBar from '@/components/layouts/main-layout/TopBar.vue'
 </script>
 <template>
     <section>
-        <TopBar title="dashboard" />
+        <TopBar title="calendar" />
     </section>
 </template>
