@@ -45,5 +45,14 @@
     "back-to-login": "Volver a inicio de sesión",
     "back": "Atras",
     "avatar": "Fotografía",
-    "at-least-8-characters": "Al menos 8 caracteres"
+    "at-least-8-characters": "Al menos 8 caracteres",
+    "sun": "Dom",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fri": "Vie",
+    "sat": "Sáb",
+    "monthly": "Mensual",
+    "weekly": "Semanal"
 }
