@@ -30,13 +30,13 @@ const { user } = useAuth()
 </template>
 <style>
 #top-bar {
-    @apply w-full h-16 flex items-center justify-between px-9 pt-9;
+    @apply w-full h-16 flex items-center justify-between px-8 pt-6;
     h2 {
         @apply text-2xl font-semibold;
     }
     .drop-down {
         button {
-            @apply flex items-center gap-x-2.5 bg-white px-4 py-2.5 rounded-md border;
+            @apply flex items-center gap-x-2.5 bg-white px-4 py-2 rounded-md border;
         }
     }
 }
