@@ -7,6 +7,21 @@ const contacts = ref<Array<any>>([])
 const loading = ref<ContactLoadingState>(ContactLoadingState.None)
 
 export function useContacts() {
+    async function findContacts(query: string) {
+        try {
+            const { data, error } = await supabase
+                .from('contacts')
+                .select('*')
+                .eq('profile_id', profileId)
+
+            if (error) throw new Error(error?.message || 'Contacts not found')
+
+            contacts.value = data
+        } catch (error) {
+            console.error('Error fetching contacts:', error)
+        }
+    }
+
     async function getContacts(profileId: string) {
         try {
             const { data, error } = await supabase
@@ -24,6 +39,7 @@ export function useContacts() {
 
     return {
         contacts,
+        findContacts,
         getContacts,
         loading,
     }

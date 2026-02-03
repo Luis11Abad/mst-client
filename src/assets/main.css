@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+@plugin 'tailwind-scrollbar' {
+    nocompatible: true;
+    preferredstrategy: 'pseudoelements';
+}
+
 @theme {
     --color-whitesmoke: #f6f6f6;
     --color-lightgray: #e8e8ed;
@@ -30,13 +35,88 @@ button {
     }
 }
 
-input {
-    @apply w-full h-10 px-3 border rounded-md bg-white;
+input,
+textarea {
+    @apply w-full px-3 border rounded-md bg-white;
     &:read-only {
         @apply bg-whitesmoke pointer-events-none;
     }
 }
 
+input {
+    @apply h-10;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+input[type='time']::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+textarea {
+    @apply py-2 resize-none;
+}
+
+label {
+    @apply mb-2 text-sm text-gray;
+}
+
 main > section {
     @apply flex flex-col h-full;
+}
+
+/* DATEPICKER STYLES */
+.v3dp__popout {
+    @apply !w-full !pb-0;
+}
+
+.v3dp__heading button {
+    @apply !font-normal;
+    &:disabled {
+        @apply !bg-white;
+    }
+    &:hover {
+        @apply !bg-whitesmoke/50;
+    }
+}
+
+.v3dp__subheading {
+    span {
+        @apply capitalize pb-1 !text-dark;
+    }
+}
+
+.v3dp__element__button__day,
+.v3dp__elements button {
+    @apply !h-10 !p-0;
+    &:disabled {
+        @apply !bg-whitesmoke;
+    }
+    span {
+        @apply !h-10 !flex items-center justify-center !leading-none !rounded-none;
+    }
+    &:hover {
+        span {
+            @apply !bg-whitesmoke !text-dark;
+        }
+    }
+    &.current {
+        span {
+            @apply !bg-primary/5 !text-primary !outline-none !font-normal;
+        }
+    }
+    &.selected {
+        span {
+            @apply !bg-primary !text-white;
+        }
+    }
 }

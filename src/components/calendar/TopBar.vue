@@ -4,50 +4,22 @@ import { startOfWeek } from '@/utils/calendar'
 import { CalendarView } from '@/types/calendar'
 import { Icon } from '@iconify/vue'
 import { useI18n } from 'vue-i18n'
+import { useUI } from '@/composables/useUI'
+import { useCalendar } from '@/composables/useCalendar'
 
 const { locale } = useI18n()
-
-const props = defineProps<{
-    view: CalendarView
-    currentDate: Date
-}>()
-
-const emit = defineEmits<{
-    (e: 'update:view', value: CalendarView): void
-    (e: 'update:currentDate', value: Date): void
-}>()
-
-const prev = () => {
-    if (props.view === CalendarView.Monthly) {
-        emit(
-            'update:currentDate',
-            new Date(props.currentDate.getFullYear(), props.currentDate.getMonth() - 1, 1),
-        )
-    } else {
-        emit('update:currentDate', new Date(props.currentDate.getTime() - 7 * 24 * 60 * 60 * 1000))
-    }
-}
-
-const next = () => {
-    if (props.view === CalendarView.Monthly) {
-        emit(
-            'update:currentDate',
-            new Date(props.currentDate.getFullYear(), props.currentDate.getMonth() + 1, 1),
-        )
-    } else {
-        emit('update:currentDate', new Date(props.currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))
-    }
-}
+const { openModal } = useUI()
+const { changeView, currentDate, next, prev, view } = useCalendar()
 
 const monthName = computed(() => {
-    return props.currentDate.toLocaleDateString(locale.value === 'es' ? 'es-ES' : 'en-US', {
+    return currentDate.value.toLocaleDateString(locale.value === 'es' ? 'es-ES' : 'en-US', {
         month: 'long',
         year: 'numeric',
     })
 })
 
 const weekRange = computed(() => {
-    const start = startOfWeek(props.currentDate)
+    const start = startOfWeek(currentDate.value)
     const end = new Date(start.getTime() + 6 * 24 * 60 * 60 * 1000)
     const loc = locale.value === 'es' ? 'es-ES' : 'en-US'
     return `${start.toLocaleDateString(loc, { day: 'numeric', month: 'short' })} - ${end.toLocaleDateString(loc, { day: 'numeric', month: 'short', year: 'numeric' })}`
@@ -64,18 +36,20 @@ const weekRange = computed(() => {
                 <Icon icon="solar:alt-arrow-right-line-duotone" height="18" />
             </button>
             <button
-                @click="$emit('update:view', CalendarView.Weekly)"
+                @click="changeView(CalendarView.Weekly)"
                 :class="['view-toggle weekly', { active: view === CalendarView.Weekly }]"
             >
                 {{ $t('weekly') }}
             </button>
             <button
-                @click="$emit('update:view', CalendarView.Monthly)"
+                @click="changeView(CalendarView.Monthly)"
                 :class="['view-toggle monthly', { active: view === CalendarView.Monthly }]"
             >
                 {{ $t('monthly') }}
             </button>
-            <button></button>
+            <button class="add-btn" @click="openModal('add-event-modal')">
+                <Icon icon="material-symbols:add-2-rounded" height="18" /> {{ $t('add') }}
+            </button>
         </div>
     </div>
     <div></div>
@@ -103,6 +77,9 @@ const weekRange = computed(() => {
         &.active {
             @apply bg-primary/5 text-primary;
         }
+    }
+    .add-btn {
+        @apply ml-6 flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-primary/90;
     }
 }
 </style>

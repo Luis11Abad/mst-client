@@ -1,32 +1,50 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { daysInWeek } from '@/utils/calendar'
+import { useCalendar } from '@/composables/useCalendar'
 
-const props = defineProps<{
-    currentDate: Date
-}>()
+const { currentDate } = useCalendar()
+
+const weekDays = computed(() => daysInWeek(currentDate.value))
+const hours = computed(() => {
+    const hoursArray: string[] = []
+    for (let hour = 0; hour < 24; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+            hoursArray.push(
+                `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
+            )
+        }
+    }
+    return hoursArray
+})
 </script>
 <template>
-    <div class="weekly-view">
-        <div class="days-grid">
-            <div
-                v-for="day in daysInWeek(props.currentDate)"
-                :key="day.toISOString()"
-                class="day"
-            ></div>
+    <div id="weekly-view">
+        <div class="grid">
+            <template v-for="hour in hours" :key="hour">
+                <div class="time-cell">{{ hour }}</div>
+                <div v-for="day in weekDays" :key="`${day.toISOString()}-${hour}`" class="day-cell">
+                    <!-- Eventos aquí -->
+                </div>
+            </template>
         </div>
     </div>
 </template>
 
 <style scoped>
-.weekly-view {
-    @apply flex-1;
-    .days-grid {
-        @apply grid grid-cols-7 h-full;
-        .day {
-            @apply h-full flex items-center justify-center border-l border-t;
-            &.today {
-                @apply bg-primary text-white;
-            }
+#weekly-view {
+    @apply overflow-hidden;
+    .grid {
+        @apply flex-1 grid grid-cols-[100px_repeat(7,_1fr)] grid-rows-[50px_repeat(48,_50px)] h-full overflow-auto scrollbar scrollbar-w-2 scrollbar-track-whitesmoke/50 scrollbar-thumb-gray/50 scrollbar-thumb-rounded;
+        .time-cell,
+        .day-cell {
+            @apply border-b border-l flex items-center justify-center text-sm;
+        }
+        .time-cell {
+            @apply bg-whitesmoke/50;
+        }
+        .day-cell {
+            position: relative;
         }
     }
 }

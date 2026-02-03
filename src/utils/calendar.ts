@@ -35,3 +35,41 @@ export const daysInWeek = (currentDate: Date) => {
     }
     return days
 }
+
+export const daysInMonth = (currentDate: Date) => {
+    const year = currentDate.getFullYear()
+    const month = currentDate.getMonth()
+
+    const firstDayDate = new Date(year, month, 1)
+    const startOffset = firstDayDate.getDay() === 0 ? 6 : firstDayDate.getDay() - 1
+
+    const lastDate = new Date(year, month + 1, 0).getDate()
+    const days = []
+
+    const prevMonthLastDate = new Date(year, month, 0).getDate()
+    for (let i = startOffset; i > 0; i--) {
+        days.push({
+            date: new Date(year, month - 1, prevMonthLastDate - i + 1),
+            isCurrentMonth: false,
+        })
+    }
+
+    for (let i = 1; i <= lastDate; i++) {
+        days.push({
+            date: new Date(year, month, i),
+            isCurrentMonth: true,
+        })
+    }
+
+    const totalSlots = days.length > 35 ? 42 : 35
+    const remaining = totalSlots - days.length
+
+    for (let i = 1; i <= remaining; i++) {
+        days.push({
+            date: new Date(year, month + 1, i),
+            isCurrentMonth: false,
+        })
+    }
+
+    return days
+}

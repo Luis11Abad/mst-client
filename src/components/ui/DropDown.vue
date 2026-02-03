@@ -24,7 +24,7 @@ function closeDropdown() {
     .box {
         @apply absolute w-full;
         &.bl {
-            @apply left-0 -top-full;
+            @apply left-0 top-full;
         }
         &.br {
             @apply right-0 top-full;
