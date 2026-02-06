@@ -44,12 +44,12 @@ function close(fromOverlay: boolean) {
 .modal {
     @apply bg-dark/50 fixed inset-0 flex items-center justify-center z-50;
     .content {
-        @apply bg-white rounded shadow p-6 w-full max-w-lg max-h-[90vh] overflow-auto relative;
+        @apply flex flex-col bg-white rounded shadow w-full max-w-lg max-h-[90vh] overflow-auto relative;
         &.side {
             @apply w-100 h-full max-w-full max-h-full rounded-r-none fixed right-0 top-0;
         }
         .header {
-            @apply flex justify-between items-center mb-4;
+            @apply flex justify-between items-center p-6;
             h2 {
                 @apply text-xl font-semibold;
             }

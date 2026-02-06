@@ -6,6 +6,10 @@ withDefaults(defineProps<{ direction?: DropDownDirectionsType }>(), {
     direction: DropDownDirections.BottomLeft,
 })
 
+defineExpose({
+    closeDropdown
+})
+
 const open = ref(false)
 
 function closeDropdown() {

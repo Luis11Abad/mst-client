@@ -8,6 +8,7 @@ export enum AuthLoadingState {
 }
 
 interface Company {
+    id: string
     name: string | null
     lang: string | null
     is_active: boolean

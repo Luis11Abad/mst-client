@@ -52,7 +52,7 @@ export function useAuth() {
         try {
             const { data, error: profileError } = await supabase
                 .from('profiles')
-                .select('*, companies (name, lang, is_active, slug)')
+                .select('*, companies (id, name, lang, is_active, slug)')
                 .eq('id', userData.id)
                 .limit(1)
 
@@ -65,6 +65,7 @@ export function useAuth() {
                 profile_id: profile.id,
                 email: userData.email as string,
                 company: {
+                    id: profile.companies.id,
                     name: profile.companies.name,
                     lang: profile.companies.lang,
                     is_active: true,

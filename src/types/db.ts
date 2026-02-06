@@ -58,74 +58,163 @@ export type Database = {
       }
       contacts: {
         Row: {
+          added_by_id: string
+          company_id: string
           created_at: string
           email: string | null
           id: string
           is_active: boolean | null
           name: string | null
           phone: string | null
-          profile_id: string
           treatment: Database["public"]["Enums"]["treatments"]
         }
         Insert: {
+          added_by_id: string
+          company_id: string
           created_at?: string
           email?: string | null
           id?: string
           is_active?: boolean | null
           name?: string | null
           phone?: string | null
-          profile_id: string
           treatment?: Database["public"]["Enums"]["treatments"]
         }
         Update: {
+          added_by_id?: string
+          company_id?: string
           created_at?: string
           email?: string | null
           id?: string
           is_active?: boolean | null
           name?: string | null
           phone?: string | null
-          profile_id?: string
           treatment?: Database["public"]["Enums"]["treatments"]
         }
         Relationships: [
           {
-            foreignKeyName: "contacts_profile_id_fkey"
-            columns: ["profile_id"]
+            foreignKeyName: "contacts_added_by_id_fkey"
+            columns: ["added_by_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
       }
       email_submissions: {
         Row: {
+          company_id: string | null
+          contact_id: string
           created_at: string
+          email_template_id: string | null
+          email_template_variant_id: string | null
           file: string
           id: string
-          recipient: string
           sender_id: string
         }
         Insert: {
+          company_id?: string | null
+          contact_id: string
           created_at?: string
+          email_template_id?: string | null
+          email_template_variant_id?: string | null
           file: string
           id: string
-          recipient: string
           sender_id: string
         }
         Update: {
+          company_id?: string | null
+          contact_id?: string
           created_at?: string
+          email_template_id?: string | null
+          email_template_variant_id?: string | null
           file?: string
           id?: string
-          recipient?: string
           sender_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "email_submissions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_submissions_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_submissions_email_template_id_fkey"
+            columns: ["email_template_id"]
+            isOneToOne: false
+            referencedRelation: "email_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_submissions_email_template_variant_id_fkey"
+            columns: ["email_template_variant_id"]
+            isOneToOne: false
+            referencedRelation: "email_template_variants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_submissions_sender_id_fkey1"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_template_variants: {
+        Row: {
+          created_at: string
+          description: string
+          email_template_id: string
+          file_url: string | null
+          id: string
+          is_active: boolean
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          email_template_id: string
+          file_url?: string | null
+          id: string
+          is_active?: boolean
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          email_template_id?: string
+          file_url?: string | null
+          id?: string
+          is_active?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_template_variants_email_template_id_fkey"
+            columns: ["email_template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_templates: {
         Row: {
           company_id: string
           created_at: string
-          file_url: string
           id: string
           is_active: boolean
           name: string
@@ -133,7 +222,6 @@ export type Database = {
         Insert: {
           company_id: string
           created_at?: string
-          file_url: string
           id?: string
           is_active?: boolean
           name: string
@@ -141,7 +229,6 @@ export type Database = {
         Update: {
           company_id?: string
           created_at?: string
-          file_url?: string
           id?: string
           is_active?: boolean
           name?: string
@@ -156,11 +243,166 @@ export type Database = {
           },
         ]
       }
+      event_participants: {
+        Row: {
+          contact_id: string | null
+          created_at: string
+          event_id: string
+          id: string
+          is_confirmed: boolean
+          profile_id: string | null
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          is_confirmed?: boolean
+          profile_id?: string | null
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          is_confirmed?: boolean
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_participants_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_participants_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          added_by_id: string
+          company_id: string
+          created_at: string
+          date: string
+          description: string
+          end_time: string
+          id: string
+          is_canceled: boolean
+          start_time: string
+          type: Database["public"]["Enums"]["event_types"]
+          updated_at: string
+        }
+        Insert: {
+          added_by_id: string
+          company_id: string
+          created_at?: string
+          date: string
+          description: string
+          end_time: string
+          id: string
+          is_canceled?: boolean
+          start_time: string
+          type: Database["public"]["Enums"]["event_types"]
+          updated_at?: string
+        }
+        Update: {
+          added_by_id?: string
+          company_id?: string
+          created_at?: string
+          date?: string
+          description?: string
+          end_time?: string
+          id?: string
+          is_canceled?: boolean
+          start_time?: string
+          type?: Database["public"]["Enums"]["event_types"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_added_by_id_fkey"
+            columns: ["added_by_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          email_submission_id: string | null
+          id: number
+          is_read: boolean
+          metadata: Json | null
+          profile_id: string
+          type: Database["public"]["Enums"]["notification_types"]
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          email_submission_id?: string | null
+          id?: number
+          is_read?: boolean
+          metadata?: Json | null
+          profile_id: string
+          type: Database["public"]["Enums"]["notification_types"]
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          email_submission_id?: string | null
+          id?: number
+          is_read?: boolean
+          metadata?: Json | null
+          profile_id?: string
+          type?: Database["public"]["Enums"]["notification_types"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_email_submission_id_fkey"
+            columns: ["email_submission_id"]
+            isOneToOne: false
+            referencedRelation: "email_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar: string | null
           company_id: string
           created_at: string | null
+          email: string
           id: string
           is_active: boolean
           is_completed: boolean
@@ -172,6 +414,7 @@ export type Database = {
           avatar?: string | null
           company_id: string
           created_at?: string | null
+          email: string
           id: string
           is_active?: boolean
           is_completed?: boolean
@@ -183,6 +426,7 @@ export type Database = {
           avatar?: string | null
           company_id?: string
           created_at?: string | null
+          email?: string
           id?: string
           is_active?: boolean
           is_completed?: boolean
@@ -205,10 +449,38 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_event_with_participants:
+        | {
+            Args: {
+              p_added_by_id: string
+              p_company_id: string
+              p_date: string
+              p_description: string
+              p_end_time: string
+              p_participants: Json
+              p_start_time: string
+              p_type: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_added_by_id: string
+              p_company_id: string
+              p_description: string
+              p_end_time: string
+              p_participants: Json
+              p_start_time: string
+              p_type: string
+            }
+            Returns: Json
+          }
+      get_my_company_id: { Args: never; Returns: string }
     }
     Enums: {
+      event_types: "Meet" | "Show" | "Contract" | "Delivery"
       languages: "es" | "en"
+      notification_types: "lead" | "open" | "click"
       profile_roles: "User" | "Manager"
       treatments: "Formal" | "Casual"
     }
@@ -338,7 +610,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      event_types: ["Meet", "Show", "Contract", "Delivery"],
       languages: ["es", "en"],
+      notification_types: ["lead", "open", "click"],
       profile_roles: ["User", "Manager"],
       treatments: ["Formal", "Casual"],
     },

@@ -1,10 +1,11 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
-import { ref, watch, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted, type Component } from 'vue'
 import { useUI } from '@/composables/useUI'
 import { AlertType } from '@/types/ui'
 
 import TextInput from './TextInput.vue'
+import { Icon } from '@iconify/vue/dist/iconify.js';
 
 const props = defineProps<{
     label: string
@@ -22,8 +23,8 @@ const DEBOUNCE_MS = 300
 const { setAlert } = useUI()
 
 const results = ref<unknown[]>([])
+const inputFocused = ref(false)
 const loading = ref(false)
-
 let timer: ReturnType<typeof setTimeout> | null = null
 
 watch(model, (val) => {
@@ -35,9 +36,9 @@ watch(model, (val) => {
     }
 
     if (val.length < MIN_CHARS) return
+    loading.value = true
 
     timer = setTimeout(async () => {
-        loading.value = true
         try {
             const res = await props.searchFn(val)
             results.value = Array.isArray(res) ? res : []
@@ -56,43 +57,31 @@ onUnmounted(() => {
 
 function select(item: unknown) {
     emit('select', item)
+    inputFocused.value = false
+    model.value = ''
 }
 
-function defaultLabel(item: unknown) {
-    if (item === null || item === undefined) return ''
-    if (typeof item === 'string' || typeof item === 'number') return String(item)
-    if (typeof item === 'object') {
-        const it = item as Record<string, unknown>
-        if (typeof it['label'] === 'string') return it['label'] as string
-        if (typeof it['name'] === 'string') return it['name'] as string
-        try {
-            return JSON.stringify(item)
-        } catch {
-            return String(item)
-        }
-    }
-    return String(item)
+function focusResults() {
+    inputFocused.value = true
 }
 </script>
 
 <template>
-    <div class="search-input">
-        <TextInput :label="props.label" v-model="model" />
-        <div class="results" v-if="!loading && model.length > MIN_CHARS">
-            <ul v-if="results.length" class="bg-white border rounded shadow max-h-60 overflow-auto">
+    <div class="search-input" v-click-outside="() => inputFocused = false">
+        <Icon v-if="loading" class="loading" icon="line-md:loading-twotone-loop" height="24"/>
+        <TextInput @on-focus="focusResults" :label="props.label" icon="solar:magnifer-outline" v-model="model" />
+        <div class="results" v-if="inputFocused && !loading && model.length > MIN_CHARS">
+            <ul v-if="results.length">
                 <li
                     v-for="(item, idx) in results"
                     :key="idx"
-                    class="p-2 hover:bg-gray-100 cursor-pointer"
-                    @click="select(item)"
+                    @click.stop="select(item)"
                 >
-                    <slot name="item" :item="item" :index="idx" :select="select">
-                        <div>{{ defaultLabel(item) }}</div>
-                    </slot>
+                    <slot name="item" :item="item as any" :index="idx"></slot>
                 </li>
             </ul>
             <div v-else>
-                <div class="py-2 text-sm text-gray-500">{{ $t('no-results') }}</div>
+                <div class="empty-list">{{ $t('no-results') }}</div>
             </div>
         </div>
     </div>
@@ -101,5 +90,14 @@ function defaultLabel(item: unknown) {
 <style scoped>
 .search-input {
     @apply flex flex-col relative;
+    .loading {
+        @apply absolute right-3 top-9 text-primary;
+    }
+    .results {
+        @apply absolute w-full top-full bg-white rounded shadow max-h-60 overflow-auto;
+        .empty-list {
+            @apply py-2 text-sm text-gray-500 shadow text-center rounded;
+        }
+    }
 }
 </style>

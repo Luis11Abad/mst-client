@@ -7,23 +7,6 @@ const contacts = ref<Tables<'contacts'>[]>([])
 const loading = ref<ApiLoadingState>(ApiLoadingState.None)
 
 export function useContacts() {
-    async function findContacts(searchQuery: string) {
-        try {
-            const { data, error } = await supabase
-                .from('contacts')
-                .select('*')
-                .or(
-                    `name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,phone.ilike.%${searchQuery}%`,
-                )
-
-            if (error) throw new Error(error?.message || 'Contacts not found')
-
-            contacts.value = data
-        } catch (error) {
-            console.error('Error fetching contacts:', error)
-        }
-    }
-
     async function getContacts(profileId: string, searchQuery: string) {
         try {
             loading.value = ApiLoadingState.Loading
@@ -47,7 +30,6 @@ export function useContacts() {
 
     return {
         contacts,
-        findContacts,
         getContacts,
         loading,
     }

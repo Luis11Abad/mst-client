@@ -29,7 +29,7 @@ body {
 }
 
 button {
-    @apply cursor-pointer;
+    @apply cursor-pointer rounded;
     &:disabled {
         @apply !bg-lightgray !text-gray pointer-events-none;
     }
@@ -93,6 +93,10 @@ main > section {
     span {
         @apply capitalize pb-1 !text-dark;
     }
+}
+
+.v3dp__divider {
+    @apply !border;
 }
 
 .v3dp__element__button__day,
