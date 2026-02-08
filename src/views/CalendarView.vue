@@ -8,8 +8,13 @@ import MonthlyView from '@/components/calendar/MonthlyView.vue'
 import WeeklyView from '@/components/calendar/WeeklyView.vue'
 import WeekDays from '@/components/calendar/WeekDays.vue'
 import AddEventModal from '@/components/calendar/AddEventModal.vue'
+import { onMounted } from 'vue'
 
-const { currentDate, view } = useCalendar()
+const { events, view, getEvents } = useCalendar()
+
+onMounted(() => {
+    getEvents()
+})
 </script>
 <template>
     <section>
@@ -17,9 +22,9 @@ const { currentDate, view } = useCalendar()
         <div class="p-8 flex-1 overflow-hidden">
             <div id="calendar">
                 <CalendarTopBar />
-                <WeekDays :current-date="currentDate" :view="view" />
-                <MonthlyView v-if="view === CalendarView.Monthly" :currentDate="currentDate" />
-                <WeeklyView v-else :currentDate="currentDate" />
+                <WeekDays :view="view" />
+                <MonthlyView v-if="view === CalendarView.Monthly" :events="events" />
+                <WeeklyView v-else />
             </div>
         </div>
     </section>
@@ -27,6 +32,6 @@ const { currentDate, view } = useCalendar()
 </template>
 <style>
 #calendar {
-    @apply flex flex-col bg-white rounded-lg shadow h-full;
+    @apply flex flex-col bg-white rounded-lg shadow h-full overflow-auto;
 }
 </style>

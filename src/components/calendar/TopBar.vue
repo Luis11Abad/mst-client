@@ -52,7 +52,6 @@ const weekRange = computed(() => {
             </button>
         </div>
     </div>
-    <div></div>
 </template>
 <style scoped>
 #top-bar {

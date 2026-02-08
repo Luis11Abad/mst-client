@@ -1,9 +1,9 @@
-import type { Tables } from "./db"
+import type { Tables } from './db'
 
 export enum CalendarLoadingState {
     None,
     Get,
-    Create
+    Create,
 }
 
 export enum CalendarView {
@@ -32,10 +32,10 @@ export interface SelectableEventParticipant {
     avatar: string | null
 }
 
-export interface EventResponse {
-    id: string,
+export interface EventItem {
+    id: string
     description: string
-    type: EventType,
+    type: EventType
     date: Date
     startTime: string
     endTime: string

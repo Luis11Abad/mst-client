@@ -1,11 +1,11 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
-import { ref, watch, onUnmounted, type Component } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { useUI } from '@/composables/useUI'
 import { AlertType } from '@/types/ui'
 
+import { Icon } from '@iconify/vue/dist/iconify.js'
 import TextInput from './TextInput.vue'
-import { Icon } from '@iconify/vue/dist/iconify.js';
 
 const props = defineProps<{
     label: string
@@ -42,8 +42,8 @@ watch(model, (val) => {
         try {
             const res = await props.searchFn(val)
             results.value = Array.isArray(res) ? res : []
-        } catch (e: unknown) {
-            const message = (e as any)?.message || 'There was an error performing the search.'
+        } catch (e: any) {
+            const message = e?.message || 'There was an error performing the search.'
             setAlert(AlertType.Error, message)
         } finally {
             loading.value = false
@@ -67,16 +67,17 @@ function focusResults() {
 </script>
 
 <template>
-    <div class="search-input" v-click-outside="() => inputFocused = false">
-        <Icon v-if="loading" class="loading" icon="line-md:loading-twotone-loop" height="24"/>
-        <TextInput @on-focus="focusResults" :label="props.label" icon="solar:magnifer-outline" v-model="model" />
+    <div class="search-input" v-click-outside="() => (inputFocused = false)">
+        <Icon v-if="loading" class="loading" icon="line-md:loading-twotone-loop" height="24" />
+        <TextInput
+            @on-focus="focusResults"
+            :label="props.label"
+            icon="solar:magnifer-outline"
+            v-model="model"
+        />
         <div class="results" v-if="inputFocused && !loading && model.length > MIN_CHARS">
             <ul v-if="results.length">
-                <li
-                    v-for="(item, idx) in results"
-                    :key="idx"
-                    @click.stop="select(item)"
-                >
+                <li v-for="(item, idx) in results" :key="idx" @click.stop="select(item)">
                     <slot name="item" :item="item as any" :index="idx"></slot>
                 </li>
             </ul>

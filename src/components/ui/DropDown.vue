@@ -7,7 +7,7 @@ withDefaults(defineProps<{ direction?: DropDownDirectionsType }>(), {
 })
 
 defineExpose({
-    closeDropdown
+    closeDropdown,
 })
 
 const open = ref(false)
@@ -24,7 +24,7 @@ function closeDropdown() {
 </template>
 <style>
 .drop-down {
-    @apply relative;
+    @apply relative z-30;
     .box {
         @apply absolute w-full;
         &.bl {

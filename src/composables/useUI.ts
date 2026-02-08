@@ -1,4 +1,4 @@
-import type { Alert, AlertType } from '@/types/ui'
+import { AlertType, type Alert } from '@/types/ui'
 import { ref } from 'vue'
 
 const drawerExpanded = ref(false)
@@ -23,6 +23,7 @@ export function useUI() {
     }
 
     return {
+        alert,
         drawerExpanded,
         blockDrawerExpand,
         modals,

@@ -7,8 +7,11 @@ import { Layout } from '@/types/ui'
 import CompleteProfile from './main-layout/CompleteProfile.vue'
 import SideBar from './main-layout/SideBar.vue'
 import MainLoader from './main-layout/MainLoader.vue'
+import AlertPanel from '../ui/AlertPanel.vue'
+import { useUI } from '@/composables/useUI'
 
 const { checkSession, getProfile, loading, session, user } = useAuth()
+const { alert } = useUI()
 
 onMounted(() => {
     checkSession(Layout.Main)
@@ -28,6 +31,7 @@ watch(
         <SideBar />
         <main>
             <slot />
+            <AlertPanel v-if="alert" :message="alert.message" :type="alert.type" />
             <CompleteProfile v-if="user && !user.is_completed" />
         </main>
     </template>

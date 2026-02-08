@@ -42,7 +42,7 @@ function close(fromOverlay: boolean) {
 
 <style scoped>
 .modal {
-    @apply bg-dark/50 fixed inset-0 flex items-center justify-center z-50;
+    @apply bg-dark/50 fixed inset-0 flex items-center justify-center z-40;
     .content {
         @apply flex flex-col bg-white rounded shadow w-full max-w-lg max-h-[90vh] overflow-auto relative;
         &.side {

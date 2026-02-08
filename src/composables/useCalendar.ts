@@ -1,15 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ref } from 'vue'
-import { supabase } from '@/lib/supabase'
-import { CalendarLoadingState, CalendarView, EventType, ParticipantType, type CreateEventRequest, type EventResponse } from '@/types/calendar'
+import { useI18n } from 'vue-i18n'
 import { useAuth } from './useAuth'
 import { RequestProvider } from '@/services'
+import {
+    CalendarLoadingState,
+    CalendarView,
+    type CreateEventRequest,
+    type EventItem,
+} from '@/types/calendar'
+import { useUI } from './useUI'
+import { AlertType } from '@/types/ui'
 
 const currentDate = ref(new Date())
 const view = ref<CalendarView>(CalendarView.Weekly)
 const loading = ref<CalendarLoadingState>(CalendarLoadingState.None)
-const events = ref<EventResponse[]>([])
+const events = ref<EventItem[]>([])
 export function useCalendar() {
+    const { t } = useI18n()
     const { user } = useAuth()
+    const { closeModal, setAlert } = useUI()
     const { event } = RequestProvider
 
     const isMonthlyView = () => view.value === CalendarView.Monthly
@@ -22,21 +32,39 @@ export function useCalendar() {
     }
 
     async function createEvent(form: CreateEventRequest) {
-        loading.value = CalendarLoadingState.Create
-        const data = await event.create(form, user.value!)
-        console.log(data)
-        loading.value = CalendarLoadingState.None
+        try {
+            loading.value = CalendarLoadingState.Create
+            const data = await event.create(form, user.value!)
+            events.value.push(data as unknown as EventItem)
+            loading.value = CalendarLoadingState.None
+            closeModal('add-event-modal')
+            setAlert(AlertType.Success, t('create-event-success'))
+        } catch (error: Error | any) {
+            const message = error?.message || t('create-event-generic-error')
+            setAlert(AlertType.Error, message)
+        }
     }
 
     async function getEvents() {
-        loading.value = CalendarLoadingState.Get
-        const data = await event.get()
-        events.value = data
-        loading.value = CalendarLoadingState.None
+        try {
+            loading.value = CalendarLoadingState.Get
+            const data = await event.get()
+            events.value = data
+            loading.value = CalendarLoadingState.None
+        } catch (error: Error | any) {
+            const message = error?.message || t('get-events-generic-error')
+            setAlert(AlertType.Error, message)
+        }
     }
 
     async function getEventContacts(searchQuery: string) {
-        return await event.getContacts(searchQuery, user.value!)
+        try {
+            return await event.getContacts(searchQuery, user.value!)
+        } catch (error: Error | any) {
+            const message = error?.message || t('get-event-contacts-generic-error')
+            setAlert(AlertType.Error, message)
+            return []
+        }
     }
 
     function next() {
@@ -57,6 +85,7 @@ export function useCalendar() {
 
     return {
         currentDate,
+        events,
         view,
         changeView,
         createEvent,
