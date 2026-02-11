@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuth } from './useAuth'
-import { RequestProvider } from '@/services'
+import { ServiceProvider } from '@/services'
 import {
     CalendarLoadingState,
     CalendarView,
@@ -19,8 +19,8 @@ const events = ref<EventItem[]>([])
 export function useCalendar() {
     const { t } = useI18n()
     const { user } = useAuth()
-    const { closeModal, setAlert } = useUI()
-    const { event } = RequestProvider
+    const { closeModal, handleError, setAlert } = useUI()
+    const { event } = ServiceProvider
 
     const isMonthlyView = () => view.value === CalendarView.Monthly
     const currentDateYear = () => currentDate.value.getFullYear()
@@ -32,55 +32,47 @@ export function useCalendar() {
     }
 
     async function createEvent(form: CreateEventRequest) {
+        loading.value = CalendarLoadingState.Create
         try {
-            loading.value = CalendarLoadingState.Create
             const data = await event.create(form, user.value!)
             events.value.push(data as unknown as EventItem)
-            loading.value = CalendarLoadingState.None
             closeModal('add-event-modal')
             setAlert(AlertType.Success, t('create-event-success'))
-        } catch (error: Error | any) {
-            const message = error?.message || t('create-event-generic-error')
-            setAlert(AlertType.Error, message)
+        } catch (err: Error | any) {
+            handleError(err.message || 'create-event-generic-error')
         }
+        loading.value = CalendarLoadingState.None
     }
 
     async function getEvents() {
+        loading.value = CalendarLoadingState.Get
         try {
-            loading.value = CalendarLoadingState.Get
-            const data = await event.get()
-            events.value = data
-            loading.value = CalendarLoadingState.None
-        } catch (error: Error | any) {
-            const message = error?.message || t('get-events-generic-error')
-            setAlert(AlertType.Error, message)
+            events.value = await event.get()
+        } catch (err: Error | any) {
+            handleError(err.message || 'get-events-generic-error')
         }
+        loading.value = CalendarLoadingState.None
     }
 
     async function getEventContacts(searchQuery: string) {
         try {
             return await event.getContacts(searchQuery, user.value!)
-        } catch (error: Error | any) {
-            const message = error?.message || t('get-event-contacts-generic-error')
-            setAlert(AlertType.Error, message)
+        } catch (err: Error | any) {
+            handleError(err.message || 'get-event-contacts-generic-error')
             return []
         }
     }
 
     function next() {
-        if (isMonthlyView()) {
-            currentDate.value = new Date(currentDateYear(), currentDateMonth() + 1, 1)
-        } else {
-            currentDate.value = new Date(currentDateTime() + 7 * 24 * 60 * 60 * 1000)
-        }
+        currentDate.value = isMonthlyView()
+            ? new Date(currentDateYear(), currentDateMonth() + 1, 1)
+            : new Date(currentDateTime() + 7 * 24 * 60 * 60 * 1000)
     }
 
     function prev() {
-        if (isMonthlyView()) {
-            currentDate.value = new Date(currentDateYear(), currentDateMonth() - 1, 1)
-        } else {
-            currentDate.value = new Date(currentDateTime() - 7 * 24 * 60 * 60 * 1000)
-        }
+        currentDate.value = isMonthlyView()
+            ? new Date(currentDateYear(), currentDateMonth() - 1, 1)
+            : new Date(currentDateTime() - 7 * 24 * 60 * 60 * 1000)
     }
 
     return {

@@ -1,5 +1,7 @@
-import { EventService } from "./event";
+import { AuthService } from './auth'
+import { EventService } from './event'
 
-export const RequestProvider = {
-    event: new EventService()
-};
+export const ServiceProvider = {
+    auth: new AuthService(),
+    event: new EventService(),
+}

@@ -15,6 +15,13 @@ interface Company {
     slug: string
 }
 
+export interface CompleteProfileRequest {
+    name: string
+    phone: string
+    password: string
+    avatar: File
+}
+
 export interface User {
     id: string
     profile_id: string
